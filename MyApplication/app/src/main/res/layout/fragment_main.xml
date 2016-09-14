@@ -1,0 +1,66 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="?android:attr/actionBarSize"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Route: " />
+        <Button
+            android:id="@+id/searchBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/distance" />
+
+        <EditText
+            android:id="@+id/distanceET"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/distance"
+            android:layout_marginStart="30dp"/>
+
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/radioGroup"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|bottom"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radio_mi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="mi" />
+
+            <RadioButton
+                android:id="@+id/radio_kl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="kl" />
+        </RadioGroup>
+    </LinearLayout>
+
+
+
+</LinearLayout>
