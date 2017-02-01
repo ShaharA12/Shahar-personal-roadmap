@@ -69,10 +69,45 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback {
         PlaceAutocompleteFragment autocompleteFragmentTo = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.searchTo);
         autocompleteFragmentTo.setHint("Choose destination");
         autocompleteFragmentTo.setOnPlaceSelectedListener(onPlaceSelectedListenerTo);
-        PlaceAutocompleteFragment autocompleteFragmentFrom = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.searchFrom);
+        PlaceAutocompleteFragment autocompleteFragmentFrom = (PlaceAutocompleteFragment)
+                getActivity().getFragmentManager()
+                        .findFragmentById(R.id.searchFrom);
         autocompleteFragmentFrom.setHint("Your location");
         autocompleteFragmentFrom.setOnPlaceSelectedListener(onPlaceSelectedListenerFrom);
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        gMapView.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (getActivity() != null) {
+            android.app.FragmentManager fragmentManager = getActivity().getFragmentManager();
+            android.app.Fragment fragment = fragmentManager.findFragmentById(R.id.searchFrom);
+            android.app.Fragment fragment1 = fragmentManager.findFragmentById(R.id.searchTo);
+            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(fragment);
+            fragmentTransaction.remove(fragment1);
+            fragmentTransaction.commit();
+        }
+    }
+
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        gMapView.onLowMemory();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        gMapView.onResume();
     }
 
     @Override
@@ -128,6 +163,13 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback {
         }
     };
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        gMapView.onDestroy();
+    }
+
     private void routeCalculation() {
         if (latLongFrom != null && latLongTo != null && googleMap != null) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLongFrom, 14));
@@ -176,10 +218,11 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void showDistance(String text) {
-        distance = text;
+        String[] parts = text.split(" ");
+        distance = parts[0];
         ((LinearLayout) getView().findViewById(R.id.bottomLinearLayout)).setVisibility(View.VISIBLE);
         ((ImageButton) getView().findViewById(R.id.sendBT)).setVisibility(View.VISIBLE);
-        ((TextView) getView().findViewById(R.id.distanceTV)).setText(distance);
+        ((TextView) getView().findViewById(R.id.distanceTV)).setText(text);
     }
 
     @OnClick(R.id.sendBT)
@@ -188,7 +231,7 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback {
         bundle.putString("distance", distance);
         MainFragment fragment = new MainFragment();
         fragment.setArguments(bundle);
-        mainActivity.changeFragment(fragment,MainFragment.NAME,mainActivity.FRAGMENT_ANIMATION);
+        mainActivity.changeFragment(fragment, MainFragment.NAME, mainActivity.FRAGMENT_ANIMATION);
     }
 
     @Override

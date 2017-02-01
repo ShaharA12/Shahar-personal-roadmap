@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import butterknife.ButterKnife;
 import test.test.com.myapplication.fragments.MainFragment;
 
 public class MainActivity extends AppCompatActivity// implements OnMapReadyCallback
@@ -11,23 +12,26 @@ public class MainActivity extends AppCompatActivity// implements OnMapReadyCallb
     public static int FRAGMENT_NO_ANIMATION = 0;
     public static int FRAGMENT_ANIMATION = 1;
     public static int FRAGMENT_BACK_ANIMATION = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         changeFragment(new MainFragment(), MainFragment.NAME, FRAGMENT_ANIMATION);
     }
 
 
     public void changeFragment(Fragment fragment, String className, int animationState) {
         android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        int i=R.animator.slide_in_right;
+        ft.addToBackStack(null);
+        int i = R.animator.slide_in_right;
         if (animationState == FRAGMENT_ANIMATION) {
-       //    ft.setCustomAnimations(R.animator.slide_in_right, R.animator.fragment_scale_out);
+            //    ft.setCustomAnimations(R.animator.slide_in_right, R.animator.fragment_scale_out);
         } else if (animationState == FRAGMENT_BACK_ANIMATION) {
-       //     ft.setCustomAnimations(R.animator.fragment_scale_in, R.animator.slide_out_right);
+            //     ft.setCustomAnimations(R.animator.fragment_scale_in, R.animator.slide_out_right);
         }
-        ft.replace(R.id.fragment_container, fragment, className).commit();
+        ft.replace(R.id.fragment_container, fragment).commit();
 //        FragmentTransaction ft  = getSupportFragmentManager().beginTransaction();
 ////        fragmentManager.beginTransaction()
 ////                .replace(R.id.fragment_container, fragment).commit();
@@ -39,4 +43,18 @@ public class MainActivity extends AppCompatActivity// implements OnMapReadyCallb
 //        }
 //        ft.replace(R.id.fragment_container, fragment, className).commit();
     }
+
+    //    @Override
+//    public boolean onPrepareOptionsMenu(final Menu menu) {
+//        getMenuInflater().inflate(R.menu.dashboard, menu);
+//
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        changeFragment(new SettingFragment(),SettingFragment.NAME,FRAGMENT_ANIMATION);
+//        return super.onOptionsItemSelected(item);
+//    }
+
 }
