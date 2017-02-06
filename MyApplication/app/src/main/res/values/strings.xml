@@ -11,5 +11,6 @@
     <string name="save">Save</string>
     <string name="find_route">Find Route</string>
     <string name="find_your_route">Fing your Route:</string>
+    <string name="send">Send</string>
 
 </resources>

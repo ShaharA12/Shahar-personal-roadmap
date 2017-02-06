@@ -71,7 +71,7 @@ public class SettingFragment extends Fragment {
     }
     @OnClick(R.id.editTV)
     public void edit(){
-        mainActivity.changeFragment(new EditSettingFragment(),EditSettingFragment.Name,0);
+        mainActivity.changeFragment(new EditSettingFragment(),EditSettingFragment.Name);
     }
     private void setToolBar() {
         mainActivity.setSupportActionBar(toolbar);

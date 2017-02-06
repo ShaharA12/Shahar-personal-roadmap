@@ -15,15 +15,13 @@ import java.text.DecimalFormat;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import test.test.com.myapplication.MainActivity;
 import test.test.com.myapplication.R;
+import test.test.com.myapplication.interfaces.OnRouteReady1;
 import test.test.com.myapplication.utilities.SharedPreferencesUtil;
 
-import static test.test.com.myapplication.MainActivity.FRAGMENT_ANIMATION;
 
-
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements OnRouteReady1 {
 
     @Bind(R.id.distanceET)
     TextView distanceET;
@@ -31,24 +29,28 @@ public class MainFragment extends Fragment {
     LinearLayout resultsLL;
     @Bind(R.id.sum_all)
     TextView sumAll;
+    @Bind(R.id.gasTV)
+    TextView gasPrice;
+    @Bind(R.id.kTomTV)
+    TextView kToM;
+
     public static String NAME = "MainFragment";
     private MainActivity mainActivity;
     private String distance = "0";
-    private float gasPrice = (float) 6.16;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, view);
-        try {
-            distance = getArguments().getString("distance");
-            distanceET.setText(distance + " km");
-            sumAll.setText(new DecimalFormat("##.##").format((calculate(distance))));
-            resultsLL.setVisibility(View.VISIBLE);
-        } catch (Exception e) {
-            resultsLL.setVisibility(View.INVISIBLE);
-        }
+        mainActivity.setOnRouteReady(this);
+        setData();
         return view;
+    }
+
+    private void setData() {
+        float priceDefault = (float) 6.16;
+        gasPrice.setText(String.valueOf(SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.GAS_PRICE, priceDefault)));
+        kToM.setText(String.valueOf(SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.KILOMETER, 14)) + " " + getActivity().getResources().getString(R.string.ktom_tv));
     }
 
     private float calculate(String distance) {
@@ -85,13 +87,15 @@ public class MainFragment extends Fragment {
     }
 
 
-    @OnClick(R.id.searchBT)
-    public void search() {
-        mainActivity.changeFragment(new SearchFragment(), SearchFragment.NAME, FRAGMENT_ANIMATION);
-    }
-
-    @OnClick(R.id.settingBT)
-    public void settingBTClicked() {
-        mainActivity.changeFragment(new SettingFragment(), SettingFragment.NAME, FRAGMENT_ANIMATION);
+    @Override
+    public void OnRouteReady1(String distance) {
+        try {
+            this.distance = distance;
+            distanceET.setText(distance + " km");
+            sumAll.setText(new DecimalFormat("##.##").format((calculate(distance))));
+            resultsLL.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            resultsLL.setVisibility(View.INVISIBLE);
+        }
     }
 }

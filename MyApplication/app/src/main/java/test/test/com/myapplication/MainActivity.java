@@ -3,58 +3,86 @@ package test.test.com.myapplication;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.FrameLayout;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import test.test.com.myapplication.fragments.MainFragment;
+import test.test.com.myapplication.fragments.SearchFragment;
+import test.test.com.myapplication.interfaces.OnRouteReady;
+import test.test.com.myapplication.interfaces.OnRouteReady1;
 
-public class MainActivity extends AppCompatActivity// implements OnMapReadyCallback
-{
-    public static int FRAGMENT_NO_ANIMATION = 0;
-    public static int FRAGMENT_ANIMATION = 1;
-    public static int FRAGMENT_BACK_ANIMATION = 2;
+public class MainActivity extends AppCompatActivity implements OnRouteReady {
+    @Bind(R.id.sliding_layout)
+    SlidingUpPanelLayout mSlider;
+    @Bind(R.id.fragment_container)
+    FrameLayout mapLayout;
+    private android.app.Fragment mainFragment;
+    public static final float SLIDING_PANEL_ANCHOR_POINT = 0.50f;
+    private OnRouteReady1 listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        changeFragment(new MainFragment(), MainFragment.NAME, FRAGMENT_ANIMATION);
+        SearchFragment searchFragment = new SearchFragment();
+        searchFragment.setOnRouteReady(this);
+        mainFragment = getFragmentManager().findFragmentById(R.id.static_fragment);
+        changeFragment(searchFragment, SearchFragment.NAME);
+        setUpSlider();
     }
 
+    private void setUpSlider() {
+        mSlider.setCoveredFadeColor(0);
+        mSlider.setOverlayed(false);
+        mSlider.setAnchorPoint(SLIDING_PANEL_ANCHOR_POINT);
+        mSlider.setPanelHeight(0);
+        mSlider.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, final float slideOffset) {
+                updateMapMargins((int) (panel.getHeight() * slideOffset) / 2);
+            }
 
-    public void changeFragment(Fragment fragment, String className, int animationState) {
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+
+            }
+        });
+    }
+
+    private void updateMapMargins(int topMargin) {
+
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mapLayout.getLayoutParams();
+        params.topMargin = -topMargin;
+        params.bottomMargin = topMargin;
+        mapLayout.setLayoutParams(params);
+    }
+
+    public void changeFragment(Fragment fragment, String className) {
         android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.addToBackStack(null);
-        int i = R.animator.slide_in_right;
-        if (animationState == FRAGMENT_ANIMATION) {
-            //    ft.setCustomAnimations(R.animator.slide_in_right, R.animator.fragment_scale_out);
-        } else if (animationState == FRAGMENT_BACK_ANIMATION) {
-            //     ft.setCustomAnimations(R.animator.fragment_scale_in, R.animator.slide_out_right);
-        }
-        ft.replace(R.id.fragment_container, fragment).commit();
-//        FragmentTransaction ft  = getSupportFragmentManager().beginTransaction();
-////        fragmentManager.beginTransaction()
-////                .replace(R.id.fragment_container, fragment).commit();
-//
-//        if (animationState == FRAGMENT_ANIMATION) {
-//            ft.setCustomAnimations(R.animator.slide_in_right, R.animator.fragment_scale_out);
-//        } else if (animationState == FRAGMENT_BACK_ANIMATION) {
-//            ft.setCustomAnimations(R.animator.fragment_scale_in, R.animator.slide_out_right);
-//        }
-//        ft.replace(R.id.fragment_container, fragment, className).commit();
+        ft.replace(R.id.fragment_container, fragment, className).commit();
     }
 
-    //    @Override
-//    public boolean onPrepareOptionsMenu(final Menu menu) {
-//        getMenuInflater().inflate(R.menu.dashboard, menu);
-//
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        changeFragment(new SettingFragment(),SettingFragment.NAME,FRAGMENT_ANIMATION);
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public void OnRouteReady(String distance) {
+        listener.OnRouteReady1(distance);
+        mSlider.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
+        mSlider.setPanelHeight((int) SLIDING_PANEL_ANCHOR_POINT);
+    }
 
+    @Override
+    public void onBackPressed() {
+        if (mSlider.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED || mSlider.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            mSlider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void setOnRouteReady(OnRouteReady1 listener) {
+        this.listener = listener;
+    }
 }

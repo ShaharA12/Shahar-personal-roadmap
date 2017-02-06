@@ -1,17 +1,23 @@
 package test.test.com.myapplication.fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.akexorcist.googledirection.DirectionCallback;
@@ -20,6 +26,8 @@ import com.akexorcist.googledirection.constant.AvoidType;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -29,7 +37,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONException;
@@ -43,19 +53,28 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import test.test.com.myapplication.MainActivity;
 import test.test.com.myapplication.R;
+import test.test.com.myapplication.interfaces.OnRouteReady;
+import test.test.com.myapplication.utilities.ILocationCallBack;
+import test.test.com.myapplication.utilities.LocationUtils;
+import test.test.com.myapplication.utilities.PermissionUtils;
 
-public class SearchFragment extends Fragment implements OnMapReadyCallback {
+public class SearchFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
     public static String NAME = "SearchFragment";
+
+    @Bind(R.id.searchFromLL)
+    LinearLayout searchFromLL;
+    @Bind(R.id.sendBT)
+    Button send;
     private LatLng latLongFrom = null;
     private LatLng latLongTo = null;
     private GoogleMap googleMap = null;
-    @Bind(R.id.sendBT)
-    ImageButton send;
     MapView gMapView;
     GoogleMap gMap = null;
     private String distance = "0";
     private MainActivity mainActivity;
+    private PlaceAutocompleteFragment autocompleteFragmentFrom;
+    private OnRouteReady listener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,17 +83,38 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback {
         MapsInitializer.initialize(getActivity().getApplicationContext());
         gMapView = (MapView) view.findViewById(R.id.map);
         gMapView.onCreate(savedInstanceState);
-        gMapView.onResume();
         gMapView.getMapAsync(this);
         PlaceAutocompleteFragment autocompleteFragmentTo = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.searchTo);
         autocompleteFragmentTo.setHint("Choose destination");
         autocompleteFragmentTo.setOnPlaceSelectedListener(onPlaceSelectedListenerTo);
-        PlaceAutocompleteFragment autocompleteFragmentFrom = (PlaceAutocompleteFragment)
-                getActivity().getFragmentManager()
-                        .findFragmentById(R.id.searchFrom);
-        autocompleteFragmentFrom.setHint("Your location");
+        autocompleteFragmentFrom = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.searchFrom);
+        autocompleteFragmentFrom.setText("Your location");
         autocompleteFragmentFrom.setOnPlaceSelectedListener(onPlaceSelectedListenerFrom);
+        searchFromLL.setVisibility(View.GONE);
+        getLocation();
         return view;
+    }
+
+    private void getLocation() {
+        if (PermissionUtils.isLocationPermissionsApproved(mainActivity)) {
+            LocationUtils.getLocation(mainActivity, new ILocationCallBack() {
+                @Override
+                public void onLocation(Location location) {
+                    if (location != null) {
+                        latLongFrom = new LatLng(location.getLatitude(), location.getLongitude());
+                    }
+                }
+            });
+        } else {
+            PermissionUtils.requestForLocationPermissions(mainActivity);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (PermissionUtils.isLocationPermissionsApproved(getActivity())) {
+            getLocation();
+        }
     }
 
     @Override
@@ -87,16 +127,22 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback {
     public void onDestroyView() {
         super.onDestroyView();
         if (getActivity() != null) {
-            android.app.FragmentManager fragmentManager = getActivity().getFragmentManager();
-            android.app.Fragment fragment = fragmentManager.findFragmentById(R.id.searchFrom);
-            android.app.Fragment fragment1 = fragmentManager.findFragmentById(R.id.searchTo);
-            android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(fragment);
-            fragmentTransaction.remove(fragment1);
-            fragmentTransaction.commit();
+            try {
+                android.app.FragmentManager fragmentManager = getActivity().getFragmentManager();
+                android.app.Fragment fragment = fragmentManager.findFragmentById(R.id.searchFrom);
+                android.app.Fragment fragment1 = fragmentManager.findFragmentById(R.id.searchTo);
+                android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.remove(fragment);
+                fragmentTransaction.remove(fragment1);
+                fragmentTransaction.commit();
+            }catch (Exception e){}
         }
     }
 
+    @OnClick(R.id.settingBT)
+    public void settingBTClicked() {
+        mainActivity.changeFragment(new SettingFragment(), SettingFragment.NAME);
+    }
 
     @Override
     public void onLowMemory() {
@@ -138,6 +184,7 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback {
             // TODO: Get info about the selected place.
             Log.i(NAME, "Place: " + place);
             latLongTo = place.getLatLng();
+            searchFromLL.setVisibility(View.VISIBLE);
             routeCalculation();
         }
 
@@ -174,6 +221,7 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback {
         if (latLongFrom != null && latLongTo != null && googleMap != null) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLongFrom, 14));
             final GoogleMap googleMap1 = googleMap;
+            googleMap1.clear();
             GoogleDirection.withServerKey("AIzaSyCR_aY-ewaZBbJzZm8rh2-GMxvAr4mLSXg")
                     .from(latLongFrom)
                     .to(latLongTo)
@@ -203,9 +251,8 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback {
                                     googleMap1.addPolyline(polylineOption);
                                 }
 
-                                Toast.makeText(getActivity().getApplicationContext(), "ok", Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(getActivity().getApplicationContext(), "not ok", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity().getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
                             }
                         }
 
@@ -214,28 +261,54 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback {
                             // Do something
                         }
                     });
+        } else if (latLongFrom == null) {
+            autocompleteFragmentFrom.setHint("From...");
         }
     }
 
     private void showDistance(String text) {
         String[] parts = text.split(" ");
         distance = parts[0];
-        ((LinearLayout) getView().findViewById(R.id.bottomLinearLayout)).setVisibility(View.VISIBLE);
-        ((ImageButton) getView().findViewById(R.id.sendBT)).setVisibility(View.VISIBLE);
-        ((TextView) getView().findViewById(R.id.distanceTV)).setText(text);
+        listener.OnRouteReady(distance);
+        send.setVisibility(View.VISIBLE);
+
     }
 
     @OnClick(R.id.sendBT)
-    public void sendistance() {
-        Bundle bundle = new Bundle();
-        bundle.putString("distance", distance);
-        MainFragment fragment = new MainFragment();
-        fragment.setArguments(bundle);
-        mainActivity.changeFragment(fragment, MainFragment.NAME, mainActivity.FRAGMENT_ANIMATION);
+    public void sendRoute() {
+        listener.OnRouteReady(distance);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        }
+//        googleMap.setMyLocationEnabled(true);
+
+        LocationManager locationManager = (LocationManager) mainActivity.getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(), location.getLongitude())));
+        if (location != null) {
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                    .zoom(17)                   // Sets the zoom
+                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                    .build();                   // Creates a CameraPosition from the builder
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    public void setOnRouteReady(OnRouteReady listener) {
+        this.listener = listener;
     }
 }
