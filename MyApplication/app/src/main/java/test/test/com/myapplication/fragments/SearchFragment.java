@@ -54,7 +54,7 @@ import butterknife.OnClick;
 import test.test.com.myapplication.MainActivity;
 import test.test.com.myapplication.R;
 import test.test.com.myapplication.interfaces.OnRouteReady;
-import test.test.com.myapplication.utilities.ILocationCallBack;
+import test.test.com.myapplication.interfaces.ILocationCallBack;
 import test.test.com.myapplication.utilities.LocationUtils;
 import test.test.com.myapplication.utilities.PermissionUtils;
 

@@ -1,4 +1,4 @@
-package test.test.com.myapplication.utilities;
+package test.test.com.myapplication.interfaces;
 
 import android.location.Location;
 

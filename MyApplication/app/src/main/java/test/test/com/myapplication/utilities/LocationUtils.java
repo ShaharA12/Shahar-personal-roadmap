@@ -15,6 +15,8 @@ import com.google.android.gms.location.LocationServices;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import test.test.com.myapplication.interfaces.ILocationCallBack;
+
 //import com.google.android.gms.location.LocationListener;
 //import com.google.android.gms.location.LocationRequest;
 //import com.google.android.gms.location.LocationServices;
