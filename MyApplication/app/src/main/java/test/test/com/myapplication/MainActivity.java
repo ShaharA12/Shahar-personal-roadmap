@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements OnRouteReady {
 
     public void changeFragment(Fragment fragment, String className) {
         android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.addToBackStack(null);
         ft.replace(R.id.fragment_container, fragment, className).commit();
     }
 
@@ -104,9 +105,11 @@ public class MainActivity extends AppCompatActivity implements OnRouteReady {
     public void onBackPressed() {
         if (mSlider.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED || mSlider.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             mSlider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-        } else {
+        } else if (searchFragment != null && searchFragment.isVisible()) {
+            finish();
+        } else
             super.onBackPressed();
-        }
+
     }
 
     public void setOnRouteReady(OnRouteReady1 listener) {
