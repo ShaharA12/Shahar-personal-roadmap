@@ -1,62 +1,60 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:style="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginBottom="?android:attr/actionBarSize"
     android:orientation="vertical">
 
     <include layout="@layout/gas_kilo_details" />
 
     <LinearLayout
-    android:id="@+id/resultsLL"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:visibility="invisible"
-    android:orientation="vertical">
-    <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/resultsLL"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:layout_margin="10dp">
+        android:orientation="vertical"
+        android:visibility="invisible">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:text="@string/distance" />
+            android:layout_margin="@dimen/default_margin_number"
+            android:gravity="bottom">
 
-        <TextView
-            android:id="@+id/distanceET"
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/distance"
+                style="@style/TextViewTitle" />
+
+            <TextView
+                android:id="@+id/distanceET"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/DistanceFromResults"
+                android:hint="@string/distance" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/distance"
-            android:layout_marginStart="30dp"/>
+            android:layout_margin="@dimen/default_margin_number"
+            android:gravity="bottom">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sum_all"
+                style="@style/TextViewTitle"/>
+
+            <TextView
+                android:id="@+id/sum_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/DistanceFromResults" />
+        </LinearLayout>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:layout_margin="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:text="@string/sum_all" />
-
-        <TextView
-            android:layout_marginLeft="25dp"
-            android:id="@+id/sum_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-             />
-
-
-    </LinearLayout>
-</LinearLayout>
 
 
 </LinearLayout>

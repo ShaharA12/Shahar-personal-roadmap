@@ -5,29 +5,22 @@
     android:orientation="vertical">
 
 
-
     <LinearLayout
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_margin="@dimen/default_margin_number"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="10dp"
+            style="@style/ImageStyle"
             android:src="@mipmap/gas_icon" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="@string/gas_price"
-            android:textSize="14dp" />
+            style="@style/TextViewTitle"
+            android:text="@string/gas_price" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -39,41 +32,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="35dp"
-                android:text="dasdasd" />
+                android:layout_marginEnd="35dp" />
 
             <ImageView
                 android:id="@+id/shekel_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                style="@style/ImageStyle"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
                 android:src="@mipmap/shekel" />
         </RelativeLayout>
     </LinearLayout>
+
     <LinearLayout
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_margin="@dimen/default_margin_number"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="10dp"
+            style="@style/ImageStyle"
             android:src="@mipmap/car_icon" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            style="@style/TextViewTitle"
             android:text="@string/ktom"
-            android:textSize="14dp" />
+             />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -85,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp" />
+                android:layout_marginEnd="@dimen/default_margin_number" />
 
         </RelativeLayout>
     </LinearLayout>

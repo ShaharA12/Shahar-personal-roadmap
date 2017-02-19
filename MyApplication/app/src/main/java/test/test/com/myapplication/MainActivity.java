@@ -2,7 +2,6 @@ package test.test.com.myapplication;
 
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -15,6 +14,7 @@ import test.test.com.myapplication.fragments.SearchFragment;
 import test.test.com.myapplication.interfaces.ILocationCallBack;
 import test.test.com.myapplication.interfaces.OnRouteReady;
 import test.test.com.myapplication.interfaces.OnRouteReady1;
+import test.test.com.myapplication.managers.FragmentTransactionManager;
 import test.test.com.myapplication.utilities.LocationUtils;
 import test.test.com.myapplication.utilities.PermissionUtils;
 
@@ -23,10 +23,10 @@ public class MainActivity extends AppCompatActivity implements OnRouteReady {
     SlidingUpPanelLayout mSlider;
     @Bind(R.id.fragment_container)
     FrameLayout mapLayout;
-    private android.app.Fragment mainFragment;
     public static final float SLIDING_PANEL_ANCHOR_POINT = 0.50f;
     private OnRouteReady1 listener;
     private SearchFragment searchFragment;
+    private android.app.Fragment mainFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnRouteReady {
                 @Override
                 public void onLocation(Location location) {
                     if (location != null) {
-                        changeFragment(searchFragment, SearchFragment.NAME);
+                        changeFragment();
                     }
                 }
             });
@@ -88,10 +88,8 @@ public class MainActivity extends AppCompatActivity implements OnRouteReady {
         mapLayout.setLayoutParams(params);
     }
 
-    public void changeFragment(Fragment fragment, String className) {
-        android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.addToBackStack(null);
-        ft.replace(R.id.fragment_container, fragment, className).commit();
+    public void changeFragment() {
+        FragmentTransactionManager.makeTransactionWithFragment(this, R.id.fragment_container, searchFragment, null);
     }
 
     @Override

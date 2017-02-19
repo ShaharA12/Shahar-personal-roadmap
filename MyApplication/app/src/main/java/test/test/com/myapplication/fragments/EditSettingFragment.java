@@ -1,15 +1,14 @@
 package test.test.com.myapplication.fragments;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -21,7 +20,7 @@ import test.test.com.myapplication.utilities.SharedPreferencesUtil;
 /**
  * Created by ShaharAlush on 30/01/2017.
  */
-public class EditSettingFragment extends Fragment {
+public class EditSettingFragment extends BaseFragment {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -31,7 +30,6 @@ public class EditSettingFragment extends Fragment {
     EditText kToM;
 
     public static String Name = "EditSettingFragment";
-    private MainActivity mainActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,42 +41,18 @@ public class EditSettingFragment extends Fragment {
     }
 
     private void setData() {
-        float priceDefault = (float) 6.16;
-        gasPrice.setText(String.valueOf(SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.GAS_PRICE, priceDefault)));
-        kToM.setText(String.valueOf(SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.KILOMETER, 14)) + " ");
+        gasPrice.setText(SharedPreferencesUtil.getGasPrice());
+        kToM.setText(SharedPreferencesUtil.getKToM());
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof MainActivity) {
-            mainActivity = ((MainActivity) context);
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " Must be of MainActivity class");
-        }
-    }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof MainActivity) {
-            mainActivity = ((MainActivity) activity);
-        } else {
-            throw new RuntimeException(activity.toString()
-                    + " Must be of MainActivity class");
-        }
-    }
 
     private void setToolBar() {
-        mainActivity.setSupportActionBar(toolbar);
-        toolbar.setTitle("");
-        mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mainActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
+        super.setToolbar((MainActivity) getActivity(),toolbar,getString(R.string.app_name));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mainActivity.onBackPressed();
+                getActivity().onBackPressed();
             }
         });
     }
@@ -87,18 +61,64 @@ public class EditSettingFragment extends Fragment {
     public void saveData() {
         float gas = 0;
         float kilometer = 0;
-        try {
+        if (isFloat(String.valueOf(gasPrice.getText())) && isFloat(String.valueOf(kToM.getText()))) {
             gas = Float.parseFloat(String.valueOf(gasPrice.getText()));
             kilometer = Float.parseFloat(String.valueOf(kToM.getText()));
             if (gas > 0 && kilometer > 0) {
                 SharedPreferencesUtil.saveFloat(SharedPreferencesUtil.GAS_PRICE, gas);
                 SharedPreferencesUtil.saveFloat(SharedPreferencesUtil.KILOMETER, kilometer);
-                mainActivity.onBackPressed();
-            }else {
+                getActivity().onBackPressed();
+            } else {
 
             }
-        } catch (Exception e) {
+        } else
             Toast.makeText(getActivity(), "oooops1", Toast.LENGTH_LONG).show();
-        }
+
+    }
+
+    private boolean isFloat(String string) {
+        final String Digits = "(\\p{Digit}+)";
+        final String HexDigits = "(\\p{XDigit}+)";
+
+        // an exponent is 'e' or 'E' followed by an optionally
+        // signed decimal integer.
+        final String Exp = "[eE][+-]?" + Digits;
+        final String fpRegex =
+                ("[\\x00-\\x20]*" +  // Optional leading "whitespace"
+                        "[+-]?(" + // Optional sign character
+                        "NaN|" +           // "NaN" string
+                        "Infinity|" +      // "Infinity" string
+
+                        // A decimal floating-point string representing a finite positive
+                        // number without a leading sign has at most five basic pieces:
+                        // Digits . Digits ExponentPart FloatTypeSuffix
+                        //
+                        // Since this method allows integer-only strings as input
+                        // in addition to strings of floating-point literals, the
+                        // two sub-patterns below are simplifications of the grammar
+                        // productions from the Java Language Specification, 2nd
+                        // edition, section 3.10.2.
+
+                        // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
+                        "(((" + Digits + "(\\.)?(" + Digits + "?)(" + Exp + ")?)|" +
+
+                        // . Digits ExponentPart_opt FloatTypeSuffix_opt
+                        "(\\.(" + Digits + ")(" + Exp + ")?)|" +
+
+                        // Hexadecimal strings
+                        "((" +
+                        // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
+                        "(0[xX]" + HexDigits + "(\\.)?)|" +
+
+                        // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
+                        "(0[xX]" + HexDigits + "?(\\.)" + HexDigits + ")" +
+
+                        ")[pP][+-]?" + Digits + "))" +
+                        "[fFdD]?))" +
+                        "[\\x00-\\x20]*");// Optional trailing "whitespace"
+
+        if (Pattern.matches(fpRegex, string))
+            return true;
+        return false;
     }
 }

@@ -23,18 +23,11 @@ import test.test.com.myapplication.interfaces.ILocationCallBack;
 
 public class LocationUtils implements LocationListener {
 
-//    private static LocationUtils instance;
     private GoogleApiClient mGoogleApiClient;
     private boolean isConnected = false;
     private boolean currentlyAskingForLocation = false;
     private ILocationCallBack currentCallBack = null;
 
-//    public static LocationUtils getInstance() {
-//        if (instance == null) {
-//            instance = new LocationUtils();
-//        }
-//        return instance;
-//    }
 
     public void initialize(Context context, final LocationConnectionCallBack connectionCallBack) {
         if (mGoogleApiClient == null) {
@@ -175,25 +168,21 @@ public class LocationUtils implements LocationListener {
             LocationServices.FusedLocationApi.removeLocationUpdates(
                     mGoogleApiClient, this);
         }catch (IllegalStateException e) {
-//            L.w("Illegal state exception : " + e.toString());
         }
         disconnect();
     }
 
 
     public static void getLocation(Context context, final ILocationCallBack locationCallBack) {
-//        L.i("LOCATION: getLocation");
         final LocationUtils locationUtils = new LocationUtils();
         locationUtils.initialize(context, new LocationConnectionCallBack() {
             @Override
             public void onConnectSuccess() {
-//                L.i("LOCATION: onConnectSuccess");
                 locationUtils.getLastKnownLocation(locationCallBack);
             }
 
             @Override
             public void onConnectFailed() {
-//                L.i("LOCATION: onConnectFailed");
                 if (locationCallBack != null) {
                     locationCallBack.onLocation(null);
                 }

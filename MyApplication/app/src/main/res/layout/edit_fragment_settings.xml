@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:background="?attr/colorPrimary"
-        android:elevation="6dp"
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -19,25 +18,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_margin="@dimen/default_margin_number"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="10dp"
-            android:src="@mipmap/gas_icon" />
+        <ImageView style="@style/ImageStyle"
+            android:src="@mipmap/gas_icon"/>
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/default_margin_number"
             android:text="@string/gas_price"
-            android:textSize="14dp" />
+            android:textSize="@dimen/gas_price_textView" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -50,18 +44,13 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="35dp"
-                android:inputType="numberDecimal"
-                android:text="dasdasd" />
+                android:inputType="numberDecimal" />
 
             <ImageView
                 android:id="@+id/shekel_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                style="@style/ImageStyle"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
                 android:src="@mipmap/shekel" />
         </RelativeLayout>
     </LinearLayout>
@@ -69,23 +58,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_margin="@dimen/default_margin_number"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="10dp"
-            android:src="@mipmap/car_icon" />
+        <ImageView style="@style/ImageStyle"
+            android:src="@mipmap/car_icon"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/default_margin_number"
             android:text="@string/ktom"
             android:textSize="14dp" />
 
@@ -106,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="@dimen/default_margin_number"
                 android:gravity="center"
                 android:text="@string/ktom_tv" />
 
@@ -123,9 +106,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/white"
-            android:text="@string/save"
+            android:layout_marginBottom="@dimen/default_margin_number"
             android:background="@drawable/blue_button"
-            android:layout_marginBottom="10dp" />
+            android:text="@string/save"
+            android:textColor="@color/white" />
     </RelativeLayout>
 </LinearLayout>

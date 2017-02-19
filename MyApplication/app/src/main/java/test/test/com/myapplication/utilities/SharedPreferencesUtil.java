@@ -6,15 +6,18 @@ import android.content.SharedPreferences;
 import test.test.com.myapplication.R;
 import test.test.com.myapplication.widgets.MyApplication;
 
+import static test.test.com.myapplication.utilities.Dataconstants.KILOMETER_DEFAULT;
+import static test.test.com.myapplication.utilities.Dataconstants.PRICE_DEFAULT;
+
 /**
  * Created by ShaharAlush on 01/29/17.
  */
 public class SharedPreferencesUtil {
 
 
-    public static String GAS_PRICE="gas_price";
-    public static String KILOMETER="kilometer";
-    public static String LITER="liter";
+    public static String GAS_PRICE = "gas_price";
+    public static String KILOMETER = "kilometer";
+    public static String LITER = "liter";
 
     private static SharedPreferences getSharedPreferences() {
         return MyApplication.getContext().getSharedPreferences(MyApplication.getContext().getString(R.string.app_name), Context.MODE_PRIVATE);
@@ -42,6 +45,7 @@ public class SharedPreferencesUtil {
         getSharedPreferences().edit().putLong(key, value).commit();
 
     }
+
     public static void saveFloat(String key, float value) {
 
         getSharedPreferences().edit().putFloat(key, value).commit();
@@ -52,8 +56,10 @@ public class SharedPreferencesUtil {
 
         return getSharedPreferences().getLong(key, defaultValue);
     }
-    public static float loadFloatWithDefault(String key, float defaultValue){
-    return getSharedPreferences().getFloat(key, defaultValue);}
+
+    public static float loadFloatWithDefault(String key, float defaultValue) {
+        return getSharedPreferences().getFloat(key, defaultValue);
+    }
 
     public static boolean loadBooleanWithDefault(String key, boolean defaultValue) {
         return getSharedPreferences().getBoolean(key, defaultValue);
@@ -76,4 +82,12 @@ public class SharedPreferencesUtil {
 
     }
 
+    public static String getGasPrice() {
+        return String.valueOf(SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.GAS_PRICE, PRICE_DEFAULT));
+    }
+
+
+    public static String getKToM() {
+        return String.valueOf(SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.KILOMETER, KILOMETER_DEFAULT)) + " " + MyApplication.getContext().getResources().getString(R.string.ktom_tv);
+    }
 }

@@ -13,4 +13,9 @@
     <string name="find_your_route">Fing your Route:</string>
     <string name="send">Send</string>
 
+    <string name="kilometer">km</string>
+    <string name="choose_destination">Choose destination</string>
+    <string name="your_location">Your location</string>
+    <string name="from">From...</string>
+
 </resources>

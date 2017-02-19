@@ -1,9 +1,7 @@
 package test.test.com.myapplication.fragments;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +13,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import test.test.com.myapplication.MainActivity;
 import test.test.com.myapplication.R;
+import test.test.com.myapplication.managers.FragmentTransactionManager;
 import test.test.com.myapplication.utilities.SharedPreferencesUtil;
 
 /**
  * Created by ShaharAlush on 29/01/2017.
  */
-public class SettingFragment extends Fragment {
+public class SettingFragment extends BaseFragment {
 
     public static String NAME = "SettingFragment";
 
@@ -30,7 +29,6 @@ public class SettingFragment extends Fragment {
     TextView gasPrice;
     @Bind(R.id.kTomTV)
     TextView kToM;
-    private MainActivity mainActivity;
 
 
     @Override
@@ -43,45 +41,22 @@ public class SettingFragment extends Fragment {
     }
 
     private void setData() {
-        float priceDefault = (float) 6.16;
-        gasPrice.setText(String.valueOf(SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.GAS_PRICE, priceDefault)));
-        kToM.setText(String.valueOf(SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.KILOMETER, 14))+" "+getActivity().getResources().getString(R.string.ktom_tv));
+        gasPrice.setText(SharedPreferencesUtil.getGasPrice());
+        kToM.setText(SharedPreferencesUtil.getKToM());
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof MainActivity) {
-            mainActivity = ((MainActivity) context);
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " Must be of MainActivity class");
-        }
-    }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof MainActivity) {
-            mainActivity = ((MainActivity) activity);
-        } else {
-            throw new RuntimeException(activity.toString()
-                    + " Must be of MainActivity class");
-        }
-    }
+
     @OnClick(R.id.editTV)
     public void edit(){
-        mainActivity.changeFragment(new EditSettingFragment(),EditSettingFragment.Name);
+        FragmentTransactionManager.makeTransactionWithFragment(((AppCompatActivity)getActivity()), R.id.fragment_container, new EditSettingFragment(), null);
     }
     private void setToolBar() {
-        mainActivity.setSupportActionBar(toolbar);
-        toolbar.setTitle("");
-        mainActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mainActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
+        super.setToolbar((MainActivity) getActivity(),toolbar,getString(R.string.app_name));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mainActivity.onBackPressed();
+                getActivity().onBackPressed();
             }
         });
     }

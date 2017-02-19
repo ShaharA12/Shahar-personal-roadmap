@@ -1,7 +1,6 @@
 package test.test.com.myapplication.fragments;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -11,7 +10,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,14 +49,14 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import test.test.com.myapplication.MainActivity;
 import test.test.com.myapplication.R;
-import test.test.com.myapplication.interfaces.OnRouteReady;
 import test.test.com.myapplication.interfaces.ILocationCallBack;
+import test.test.com.myapplication.interfaces.OnRouteReady;
+import test.test.com.myapplication.managers.FragmentTransactionManager;
 import test.test.com.myapplication.utilities.LocationUtils;
 import test.test.com.myapplication.utilities.PermissionUtils;
 
-public class SearchFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
+public class SearchFragment extends BaseFragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
     public static String NAME = "SearchFragment";
 
@@ -72,8 +70,8 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback, Goog
     MapView gMapView;
     GoogleMap gMap = null;
     private String distance = "0";
-    private MainActivity mainActivity;
     private PlaceAutocompleteFragment autocompleteFragmentFrom;
+    private PlaceAutocompleteFragment autocompleteFragmentTo;
     private OnRouteReady listener;
 
     @Override
@@ -84,20 +82,27 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback, Goog
         gMapView = (MapView) view.findViewById(R.id.map);
         gMapView.onCreate(savedInstanceState);
         gMapView.getMapAsync(this);
-        PlaceAutocompleteFragment autocompleteFragmentTo = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.searchTo);
-        autocompleteFragmentTo.setHint("Choose destination");
-        autocompleteFragmentTo.setOnPlaceSelectedListener(onPlaceSelectedListenerTo);
+        autocompleteFragmentTo = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.searchTo);
         autocompleteFragmentFrom = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.searchFrom);
-        autocompleteFragmentFrom.setText("Your location");
-        autocompleteFragmentFrom.setOnPlaceSelectedListener(onPlaceSelectedListenerFrom);
+        autocompleteUI();
+
         searchFromLL.setVisibility(View.GONE);
         getLocation();
         return view;
     }
 
+    private void autocompleteUI() {
+        if (autocompleteFragmentTo != null && autocompleteFragmentFrom != null) {
+            autocompleteFragmentTo.setHint(getActivity().getResources().getString(R.string.choose_destination));
+            autocompleteFragmentTo.setOnPlaceSelectedListener(onPlaceSelectedListenerTo);
+            autocompleteFragmentFrom.setText(getActivity().getResources().getString(R.string.your_location));
+            autocompleteFragmentFrom.setOnPlaceSelectedListener(onPlaceSelectedListenerFrom);
+        }
+    }
+
     private void getLocation() {
-        if (PermissionUtils.isLocationPermissionsApproved(mainActivity)) {
-            LocationUtils.getLocation(mainActivity, new ILocationCallBack() {
+        if (PermissionUtils.isLocationPermissionsApproved(getActivity())) {
+            LocationUtils.getLocation(getActivity(), new ILocationCallBack() {
                 @Override
                 public void onLocation(Location location) {
                     if (location != null) {
@@ -106,7 +111,7 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback, Goog
                 }
             });
         } else {
-            PermissionUtils.requestForLocationPermissions(mainActivity);
+            PermissionUtils.requestForLocationPermissions(getActivity());
         }
     }
 
@@ -142,7 +147,7 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback, Goog
 
     @OnClick(R.id.settingBT)
     public void settingBTClicked() {
-        mainActivity.changeFragment(new SettingFragment(), SettingFragment.NAME);
+        FragmentTransactionManager.makeTransactionWithFragment(getActivity(), R.id.fragment_container, new SettingFragment(), null);
     }
 
     @Override
@@ -155,28 +160,6 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback, Goog
     public void onResume() {
         super.onResume();
         gMapView.onResume();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof MainActivity) {
-            mainActivity = ((MainActivity) context);
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " Must be of MainActivity class");
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof MainActivity) {
-            mainActivity = ((MainActivity) activity);
-        } else {
-            throw new RuntimeException(activity.toString()
-                    + " Must be of MainActivity class");
-        }
     }
 
     private PlaceSelectionListener onPlaceSelectedListenerTo = new PlaceSelectionListener() {
@@ -263,7 +246,7 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback, Goog
                         }
                     });
         } else if (latLongFrom == null) {
-            autocompleteFragmentFrom.setHint("From...");
+            autocompleteFragmentFrom.setHint(getActivity().getResources().getString(R.string.from));
         }
     }
 
@@ -287,7 +270,7 @@ public class SearchFragment extends Fragment implements OnMapReadyCallback, Goog
 
 //        googleMap.setMyLocationEnabled(true);
 
-            LocationManager locationManager = (LocationManager) mainActivity.getSystemService(Context.LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
             googleMap.addMarker(new MarkerOptions()

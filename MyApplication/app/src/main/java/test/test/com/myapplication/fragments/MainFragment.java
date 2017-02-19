@@ -1,10 +1,7 @@
 package test.test.com.myapplication.fragments;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +17,11 @@ import test.test.com.myapplication.R;
 import test.test.com.myapplication.interfaces.OnRouteReady1;
 import test.test.com.myapplication.utilities.SharedPreferencesUtil;
 
+import static test.test.com.myapplication.utilities.Dataconstants.KILOMETER_DEFAULT;
+import static test.test.com.myapplication.utilities.Dataconstants.PRICE_DEFAULT;
 
-public class MainFragment extends Fragment implements OnRouteReady1 {
+
+public class MainFragment extends BaseFragment implements OnRouteReady1 {
 
     @Bind(R.id.distanceET)
     TextView distanceET;
@@ -35,28 +35,25 @@ public class MainFragment extends Fragment implements OnRouteReady1 {
     TextView kToM;
 
     public static String NAME = "MainFragment";
-    private MainActivity mainActivity;
     private String distance = "0";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, view);
-        mainActivity.setOnRouteReady(this);
+        ((MainActivity)getActivity()).setOnRouteReady(this);
         setData();
         return view;
     }
 
     private void setData() {
-        float priceDefault = (float) 6.16;
-        gasPrice.setText(String.valueOf(SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.GAS_PRICE, priceDefault)));
-        kToM.setText(String.valueOf(SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.KILOMETER, 14)) + " " + getActivity().getResources().getString(R.string.ktom_tv));
+        gasPrice.setText(SharedPreferencesUtil.getGasPrice());
+        kToM.setText(SharedPreferencesUtil.getKToM());
     }
 
     private float calculate(String distance) {
         float dis = Float.parseFloat(distance);
-        float priceDefault = (float) 6.16;
-        return (dis / SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.KILOMETER, 14)) * SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.GAS_PRICE, priceDefault);
+        return (dis / SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.KILOMETER, KILOMETER_DEFAULT)) * SharedPreferencesUtil.loadFloatWithDefault(SharedPreferencesUtil.GAS_PRICE, PRICE_DEFAULT);
     }
 
     @Override
@@ -64,38 +61,13 @@ public class MainFragment extends Fragment implements OnRouteReady1 {
         super.onResume();
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof MainActivity) {
-            mainActivity = ((MainActivity) context);
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " Must be of MainActivity class");
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof MainActivity) {
-            mainActivity = ((MainActivity) activity);
-        } else {
-            throw new RuntimeException(activity.toString()
-                    + " Must be of MainActivity class");
-        }
-    }
 
 
     @Override
     public void OnRouteReady1(String distance) {
-        try {
             this.distance = distance;
-            distanceET.setText(distance + " km");
+            distanceET.setText(distance + getActivity().getResources().getString(R.string.kilometer));
             sumAll.setText(new DecimalFormat("##.##").format((calculate(distance))));
             resultsLL.setVisibility(View.VISIBLE);
-        } catch (Exception e) {
-            resultsLL.setVisibility(View.INVISIBLE);
-        }
     }
 }

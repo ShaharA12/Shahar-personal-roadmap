@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
-        sothree:umanoShadowHeight="4dp">
+        sothree:umanoShadowHeight="@dimen/shadow_height">
 
         <!-- MAIN CONTENT -->
         <FrameLayout

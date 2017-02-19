@@ -2,4 +2,9 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="shadow_height">4dp</dimen>
+    <dimen name="default_margin_number">10dp</dimen>ףפ4
+    <dimen name="gas_price_textView">14dp</dimen>
+    <dimen name="titleTextSize">16dp</dimen>
+    <dimen name="DistanceFromResults">27dp</dimen>
 </resources>
