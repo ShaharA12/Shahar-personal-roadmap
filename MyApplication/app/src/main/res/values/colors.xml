@@ -3,4 +3,36 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="white">#ffffff</color>
+    <color name="white_transparent_20">#33ffffff</color>
+    <color name="white_transparent_60">#99FFFFFF</color>
+    <color name="white_transparent_90">#CCFFFFFF</color>
+    <color name="green">#7AB53D</color>
+    <color name="green_03">#03977D</color>
+
+    <color name="red">#CC2335</color>
+    <color name="pink">#f94675</color>
+    <color name="black_transparent">#cc424242</color>
+    <color name="black2">#000000</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="grey_row">#282829</color>
+
+    <color name="cranberry">#D94F82</color>
+    <color name="chicago">#090909</color>
+    <color name="red_line">#CC2335</color>
+    <color name="green_line">#7AB53D</color>
+    <color name="grey4">#D4D4D4</color>
+    <color name="blue2">#0771E3</color>
+    <color name="blue_A3">#A3CCFF</color>
+
+    <color name="grey1">#DEDFDE</color>
+    <color name="grey3">#E9E9E9</color>
+
+    <color name="grey2">#555555</color>
+    <color name="pink1">#E0DBF1</color> <!-- 8cE0DBF1 -->
+    <color name="instruction_arrow">#a70000</color>
+    <color name="orange">#ffa500</color> <!-- 8cE0DBF1 -->
+    <color name="orange2">#80FF6A00</color>
+
 </resources>

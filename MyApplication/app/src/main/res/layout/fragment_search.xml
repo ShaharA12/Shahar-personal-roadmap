@@ -5,12 +5,18 @@
     android:orientation="vertical"
     tools:context="test.test.com.myapplication.fragments.SearchFragment">
 
-    <fragment
-        android:id="@+id/searchFrom"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+    <LinearLayout
+        android:id="@+id/searchFromLL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/map" />
+        android:layout_height="wrap_content">
+
+        <fragment
+            android:id="@+id/searchFrom"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/map" />
+    </LinearLayout>
 
     <fragment
         android:id="@+id/searchTo"
@@ -30,29 +36,23 @@
             android:layout_height="match_parent"
             tools:context="test.test.com.myapplication.fragments.SearchFragment" />
 
-        <LinearLayout
-            android:id="@+id/bottomLinearLayout"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/settingBT"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#FFF"
-            android:layout_gravity="bottom"
-            android:visibility="invisible"
-            android:orientation="horizontal">
+            android:layout_gravity="end"
+            android:layout_margin="10dp"
+            android:src="@drawable/ic_setting_dark" />
 
-            <TextView
-                android:id="@+id/distanceTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="test" />
-
-        </LinearLayout>
-        <ImageButton
+        <Button
             android:id="@+id/sendBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right|bottom"
+            android:text="@string/send"
+            android:textColor="@color/white"
             android:visibility="invisible"
-            android:src="@drawable/ic_send_black_24dp"/>
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_margin="10dp"
+            android:background="@drawable/blue_button" />
     </FrameLayout>
 </LinearLayout>
